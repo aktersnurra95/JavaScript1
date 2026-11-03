@@ -1,0 +1,35 @@
+[
+  {
+    "firstName": "Gustav",
+    "lastName": "Sulingga",
+    "age": 30,
+    "address": {
+      "street": "Störtloppsvägen",
+      "streetNum": "30",
+      "zipCode": "129 47",
+      "town": "Hägersten"
+    }
+  },
+  {
+    "firstName": "Lena",
+    "lastName": "Karlsson",
+    "age": 26,
+    "address": {
+      "street": "Störtloppsvägen",
+      "streetNum": "30",
+      "zipCode": "129 47",
+      "town": "Hägersten"
+    }
+  },
+  {
+    "firstName": "Blueberry",
+    "lastName": "",
+    "age": 6,
+    "address": {
+      "street": "Störtloppsvägen",
+      "streetNum": "30",
+      "zipCode": "129 47",
+      "town": "Hägersten"
+    }
+  }
+]
