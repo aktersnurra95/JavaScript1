@@ -9,6 +9,12 @@ console.log('questions', questions);
 let currentQuestion = 0;
 let correctAnswers = 0;
 
+printQuestion(currentQuestion);
+showAnswerDialog(currentQuestion);
+printScore();
+
+console.log('script end');
+
 function printQuestion(questionIndex) {
   console.log('Fråga', questions[questionIndex].id);
 
@@ -75,9 +81,3 @@ function printScore() {
     console.log('Antal rätt:', correctAnswers);
   }
 }
-
-printQuestion(currentQuestion);
-showAnswerDialog(currentQuestion);
-printScore();
-
-console.log('script end');
