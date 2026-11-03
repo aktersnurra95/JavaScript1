@@ -2,6 +2,7 @@ console.log('script start');
 
 const response = await fetch('questions.json');
 const questions = await response.json();
+const quizArticle = document.querySelector(".quiz");
 
 console.log('questions', questions);
 
@@ -10,10 +11,19 @@ let correctAnswers = 0;
 
 function printQuestion(questionIndex) {
   console.log('Fråga', questions[questionIndex].id);
-  console.log(questions[questionIndex].text);
-  console.log(questions[questionIndex].options);
 
-  showAnswerDialog(questionIndex);
+  let html = `
+  <h3>Fråga ${questions[questionIndex].id} av ${questions.length}</h3>
+  <p><b>${questions[questionIndex].text}</b></p>
+  `;
+
+  let i = 1;
+  for (let option of questions[questionIndex].options) {
+    html += `<p>${i}: ${option}</p>`;
+    i++;
+  }
+
+  quizArticle.innerHTML = html;
 }
 
 //shows a prompt dialog where user has to enter the answer index
@@ -49,6 +59,7 @@ function checkAnswer(questionIndex, answer) {
 function nextQuestion() {
   if (currentQuestion < questions.length - 1) {
     printQuestion(++currentQuestion);
+    showAnswerDialog(currentQuestion);
   } else {
     console.log('last question');
 
@@ -66,6 +77,7 @@ function printScore() {
 }
 
 printQuestion(currentQuestion);
+showAnswerDialog(currentQuestion);
 printScore();
 
 console.log('script end');
