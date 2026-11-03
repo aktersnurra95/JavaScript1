@@ -1,0 +1,27 @@
+table {
+  border-collapse: collapse;
+  border: solid 1px black;
+  margin-left: 1rem;
+
+  tr:not(:last-of-type) {
+    border-bottom: solid 1px grey;
+  }
+
+  td {
+    padding: .5rem 1rem;
+    text-align: center;
+
+    &:nth-of-type(even) {
+      background-color: lightgrey;
+      padding: .5rem;
+    }
+  }
+}
+
+select {
+  margin-top: 1rem;
+}
+
+label {
+  margin-left: 1rem;
+}
