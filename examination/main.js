@@ -1,3 +1,5 @@
+const sleep = ms => new Promise(res => setTimeout(res, ms));
+
 console.log('script start');
 
 const response = await fetch('questions.json');
@@ -10,6 +12,7 @@ let currentQuestion = 0;
 let correctAnswers = 0;
 
 printQuestion(currentQuestion);
+await sleep(100);
 showAnswerDialog(currentQuestion);
 printScore();
 
@@ -61,10 +64,11 @@ function checkAnswer(questionIndex, answer) {
 }
 
 //if not last question, increment currentQuestion and run printQuestion
-function nextQuestion() {
+async function nextQuestion() {
   if (currentQuestion < questions.length - 1) {
     currentQuestion++;
     printQuestion(currentQuestion);
+    await sleep(100);
     showAnswerDialog(currentQuestion);
   } else {
     console.log('last question');
@@ -80,3 +84,5 @@ function printScore() {
     console.log('Antal rätt:', correctAnswers);
   }
 }
+
+//make script wait after prompt for questions!!!!!
