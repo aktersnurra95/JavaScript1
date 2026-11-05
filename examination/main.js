@@ -24,7 +24,7 @@ function printQuestion(questionIndex) {
   `;
 
   let i = 1;
-  for (let option of questions[questionIndex].options) {
+  for (const option of questions[questionIndex].options) {
     html += `<p>${i}: ${option}</p>`;
     i++;
   }
@@ -58,17 +58,16 @@ function checkAnswer(questionIndex, answer) {
     //show dialog again if wrong answer  showAnswerDialog(questionIndex, 'Fel svar! \n');
     nextQuestion();
   }
-
 }
 
 //if not last question, increment currentQuestion and run printQuestion
 function nextQuestion() {
   if (currentQuestion < questions.length - 1) {
-    printQuestion(++currentQuestion);
+    currentQuestion++;
+    printQuestion(currentQuestion);
     showAnswerDialog(currentQuestion);
   } else {
     console.log('last question');
-
   }
 }
 
