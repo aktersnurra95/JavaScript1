@@ -24,3 +24,11 @@ str.slice(0, 5);
 //split a string by any character into an array of each split
 //use empty '' param to split at every letter.
 str.split(',');
+
+for (let letter of str) {
+
+  //trick to see if letter is equal to any of the letters in 'aeiouy' string
+  if ('aeiouy'.includes(letter)) {
+    console.log(letter);
+  }
+}
