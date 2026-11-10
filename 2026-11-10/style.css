@@ -1,0 +1,16 @@
+.person {
+  border: solid 1px black;
+  border-radius: 5px;
+  padding: 0 10px;
+  margin-bottom: 5px;
+}
+
+.name {
+  font-size: larger;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.age {
+  margin-top: 5px;
+}
