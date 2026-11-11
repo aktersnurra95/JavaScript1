@@ -9,14 +9,9 @@ console.log('questions', questions);
 
 let currentQuestion = -1;
 let correctAnswers = 0;
+let allAnswers = [];
 
 nextQuestion();
-
-let array = ['hej', 'banan'];
-let test = ['hej', 'banan'];
-
-console.log(array, test, array == test);
-
 
 function printQuestion() {
   console.log('fråga', questions[currentQuestion].id);
@@ -40,7 +35,7 @@ function printOptions() {
       form.innerHTML = `<label><input type="text" name="option" /></label>`;
       break;
     case 'boolean':
-      form.innerHTML = `<label><input type="radio" name="option" value="0" />Sant</label><br>
+      form.innerHTML = `<label><input type="radio" name="option" value="1" />Sant</label><br>
       <label><input type="radio" name="option" value="0" />Falskt</label><br>`;
       break;
     case 'scale':
@@ -69,26 +64,34 @@ function checkAnswer(event) {
   event.preventDefault();
 
   const formData = new FormData(event.target);
-  let answer = formData.getAll('option');
+  const answer = formData.getAll('option');
   console.log('raw answer', answer);
 
-  let correctAnswer;
+  allAnswers.push(answer);
 
   switch (questions[currentQuestion].type) {
     case 'multiple':
-      answer = answer.toString();
-      correctAnswer = questions[currentQuestion].answer.toString();
+      correctAnswer(answer.toString(), questions[currentQuestion].answer.toString());
       break;
     case 'text':
-      answer = answer.toString().toLowerCase().trim();
+      correctAnswer(answer.toString().toLowerCase().trim(), questions[currentQuestion].answer);
+      break;
     case 'single':
     case 'boolean':
+      correctAnswer(answer, questions[currentQuestion].answer);
+      break;
     case 'scale':
+      break;
     default:
-  }
-  console.log('final answer', answer);
+      console.log('not a defined type');
 
-  if (answer == questions[currentQuestion].answer) {
+  }
+
+  nextQuestion();
+}
+
+function correctAnswer(answer, correctAnswer) {
+  if (answer == correctAnswer) {
     console.log('Rätt svar!');
     correctAnswers++;
   } else if (false) {
@@ -96,17 +99,13 @@ function checkAnswer(event) {
   } else {
     console.log('Fel svar!');
   }
-
-  nextQuestion();
-
-  //MAYBE CREATE FUNCTION FOR CORRECTION
-
 }
 
 //if not last question, increment currentQuestion and run printQuestion
 function nextQuestion() {
   if (currentQuestion >= questions.length - 1) {
     console.log('last question');
+    printScore();
     return;
   }
 
@@ -123,4 +122,7 @@ function printScore() {
   } else {
     console.log('Antal rätt:', correctAnswers);
   }
+
+  console.log('all answers', allAnswers);
+
 }
