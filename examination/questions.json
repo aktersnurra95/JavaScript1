@@ -41,5 +41,18 @@
     "type": "text",
     "text": "Vilket nyckelord skapar en konstant?",
     "answer": "const"
+  },
+  {
+    "id": 5,
+    "type": "boolean",
+    "text": "Metoden toUpperCase() ändrar den sträng den anropas på.",
+    "answer": false
+  },
+  {
+    "id": 6,
+    "type": "scale",
+    "text": "Hur svår tycker du att kursen är hittills?",
+    "min": 1,
+    "max": 5
   }
 ]

@@ -12,6 +12,12 @@ let correctAnswers = 0;
 
 nextQuestion();
 
+let array = ['hej', 'banan'];
+let test = ['hej', 'banan'];
+
+console.log(array, test, array == test);
+
+
 function printQuestion() {
   console.log('fråga', questions[currentQuestion].id);
 
@@ -34,6 +40,8 @@ function printOptions() {
       form.innerHTML = `<label><input type="text" name="option" /></label>`;
       break;
     case 'boolean':
+      form.innerHTML = `<label><input type="radio" name="option" value="0" />Sant</label><br>
+      <label><input type="radio" name="option" value="0" />Falskt</label><br>`;
       break;
     case 'scale':
       break;
@@ -50,7 +58,7 @@ function createMultipleOptions(inputType) {
   let html = '';
   let i = 0;
   for (const option of questions[currentQuestion].options) {
-    html += `<label><input type="${inputType}" name="option" value="${i}" />${option}</label>`;
+    html += `<label><input type="${inputType}" name="option" value="${i}" />${option}</label><br>`;
     i++;
   }
   return html;
@@ -61,9 +69,24 @@ function checkAnswer(event) {
   event.preventDefault();
 
   const formData = new FormData(event.target);
-  const answer = formData.get('option');
+  let answer = formData.getAll('option');
+  console.log('raw answer', answer);
 
-  console.log('answer', answer);
+  let correctAnswer;
+
+  switch (questions[currentQuestion].type) {
+    case 'multiple':
+      answer = answer.toString();
+      correctAnswer = questions[currentQuestion].answer.toString();
+      break;
+    case 'text':
+      answer = answer.toString().toLowerCase().trim();
+    case 'single':
+    case 'boolean':
+    case 'scale':
+    default:
+  }
+  console.log('final answer', answer);
 
   if (answer == questions[currentQuestion].answer) {
     console.log('Rätt svar!');
@@ -73,9 +96,10 @@ function checkAnswer(event) {
   } else {
     console.log('Fel svar!');
   }
+
   nextQuestion();
 
-  //MAYBE USE SWITCH CASE ON TYPE TO CHECK FOR DIFFERENT INPUT ANSWER
+  //MAYBE CREATE FUNCTION FOR CORRECTION
 
 }
 
