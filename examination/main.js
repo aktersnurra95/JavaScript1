@@ -5,7 +5,6 @@ const quizDiv = document.querySelector(".quiz");
 const questionDiv = document.querySelector('.question');
 const optionsDiv = document.querySelector('.options');
 const controlsDiv = document.querySelector('.controls');
-const submitButton = document.querySelector('.submit');
 
 console.log('questions', questions);
 
@@ -18,8 +17,6 @@ let correctAnswers = 0;
 
 nextQuestion();
 
-submitButton.addEventListener('click', checkAnswer);
-
 function printQuestion() {
   console.log('fråga', questions[currentQuestion].id);
 
@@ -30,15 +27,16 @@ function printQuestion() {
 }
 
 function printOptions() {
+  const form = document.createElement('form');
   switch (questions[currentQuestion].type) {
     case 'single':
-      optionsDiv.innerHTML = createMultipleOptions('radio');
+      form.innerHTML = createMultipleOptions('radio');
       break;
     case 'multiple':
-      optionsDiv.innerHTML = createMultipleOptions('checkbox');
+      form.innerHTML = createMultipleOptions('checkbox');
       break;
     case 'text':
-      optionsDiv.innerHTML = `<label><input type="text" name="option" /></label>`;
+      form.innerHTML = `<label><input type="text" name="option" /></label>`;
       break;
     case 'boolean':
       break;
@@ -46,6 +44,11 @@ function printOptions() {
       break;
     default:
   }
+  form.innerHTML += `<input type="submit" class="submit" />`;
+  optionsDiv.append(form);
+
+  const submitButton = document.querySelector('.submit');
+  submitButton.addEventListener('click', checkAnswer);
 }
 
 function createMultipleOptions(inputType) {
