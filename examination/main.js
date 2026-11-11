@@ -1,26 +1,21 @@
 const response = await fetch('questions.json');
 const questions = await response.json();
 
-const quizDiv = document.querySelector(".quiz");
-const questionDiv = document.querySelector('.question');
-const optionsDiv = document.querySelector('.options');
-const controlsDiv = document.querySelector('.controls');
+const quizElement = document.querySelector(".quiz");
+const questionElement = document.querySelector('.question');
+const optionsElement = document.querySelector('.options');
 
 console.log('questions', questions);
 
 let currentQuestion = -1;
 let correctAnswers = 0;
 
-//printQuestion(currentQuestion);
-//printOptions(currentQuestion);
-//printScore();
-
 nextQuestion();
 
 function printQuestion() {
   console.log('fråga', questions[currentQuestion].id);
 
-  questionDiv.innerHTML = `
+  questionElement.innerHTML = `
   <h3>Fråga ${questions[currentQuestion].id} av ${questions.length}</h3>
   <p><b>${questions[currentQuestion].text}</b></p>
   `;
@@ -45,11 +40,10 @@ function printOptions() {
     default:
   }
   form.innerHTML += `<input type="submit" class="submit" />`;
-  optionsDiv.innerHTML = '';
-  optionsDiv.append(form);
+  optionsElement.innerHTML = '';
+  optionsElement.append(form);
 
-  const submitButton = document.querySelector('.submit');
-  submitButton.addEventListener('click', checkAnswer);
+  form.addEventListener('submit', checkAnswer);
 }
 
 function createMultipleOptions(inputType) {
@@ -63,16 +57,26 @@ function createMultipleOptions(inputType) {
 }
 
 //check answer and print next question
-function checkAnswer(event, answer = 0) {
+function checkAnswer(event) {
   event.preventDefault();
+
+  const formData = new FormData(event.target);
+  const answer = formData.get('option');
+
+  console.log('answer', answer);
 
   if (answer == questions[currentQuestion].answer) {
     console.log('Rätt svar!');
     correctAnswers++;
+  } else if (false) {
+    //check multi option answer 
   } else {
     console.log('Fel svar!');
   }
   nextQuestion();
+
+  //MAYBE USE SWITCH CASE ON TYPE TO CHECK FOR DIFFERENT INPUT ANSWER
+
 }
 
 //if not last question, increment currentQuestion and run printQuestion
