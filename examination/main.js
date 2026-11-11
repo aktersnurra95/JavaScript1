@@ -1,78 +1,84 @@
-const sleep = ms => new Promise(res => setTimeout(res, ms));
-
-console.log('script start');
-
 const response = await fetch('questions.json');
 const questions = await response.json();
-const quizArticle = document.querySelector(".quiz");
+
+const quizDiv = document.querySelector(".quiz");
+const questionDiv = document.querySelector('.question');
+const optionsDiv = document.querySelector('.options');
+const controlsDiv = document.querySelector('.controls');
+const submitButton = document.querySelector('.submit');
 
 console.log('questions', questions);
 
-let currentQuestion = 0;
+let currentQuestion = -1;
 let correctAnswers = 0;
 
-printQuestion(currentQuestion);
-await sleep(100);
-showAnswerDialog(currentQuestion);
-printScore();
+//printQuestion(currentQuestion);
+//printOptions(currentQuestion);
+//printScore();
 
-console.log('script end');
+nextQuestion();
 
-function printQuestion(questionIndex) {
-  console.log('Fråga', questions[questionIndex].id);
+submitButton.addEventListener('click', checkAnswer);
 
-  let html = `
-  <h3>Fråga ${questions[questionIndex].id} av ${questions.length}</h3>
-  <p><b>${questions[questionIndex].text}</b></p>
+function printQuestion() {
+  console.log('fråga', questions[currentQuestion].id);
+
+  questionDiv.innerHTML = `
+  <h3>Fråga ${questions[currentQuestion].id} av ${questions.length}</h3>
+  <p><b>${questions[currentQuestion].text}</b></p>
   `;
-
-  let i = 1;
-  for (const option of questions[questionIndex].options) {
-    html += `<p>${i}: ${option}</p>`;
-    i++;
-  }
-
-  quizArticle.innerHTML = html;
 }
 
-//shows a prompt dialog where user has to enter the answer index
-function showAnswerDialog(questionIndex, precedingMessage = '') {
-  let answer = prompt(precedingMessage + 'Svar: (1-' + questions[questionIndex].options.length + ')');
+function printOptions() {
+  switch (questions[currentQuestion].type) {
+    case 'single':
+      optionsDiv.innerHTML = createMultipleOptions('radio');
+      break;
+    case 'multiple':
+      optionsDiv.innerHTML = createMultipleOptions('checkbox');
+      break;
+    case 'text':
+      optionsDiv.innerHTML = `<label><input type="text" name="option" /></label>`;
+      break;
+    case 'boolean':
+      break;
+    case 'scale':
+      break;
+    default:
+  }
+}
 
-  checkAnswer(questionIndex, answer);
+function createMultipleOptions(inputType) {
+  let html = '';
+  let i = 0;
+  for (const option of questions[currentQuestion].options) {
+    html += `<label><input type="${inputType}" name="option" value="${i}" />${option}</label>`;
+    i++;
+  }
+  return html;
 }
 
 //check answer and print next question
-function checkAnswer(questionIndex, answer) {
-  if (answer == questions[questionIndex].answer + 1) {
+function checkAnswer(answer = 0) {
+  if (answer == questions[currentQuestion].answer) {
     console.log('Rätt svar!');
-
     correctAnswers++;
-    nextQuestion();
-  } else if (answer === null) {
-    //break out of function if user press cancel
-    console.warn('cancelled');
-    return;
-  } else if (answer < 1 || answer > questions[questionIndex].options.length || isNaN(answer)) {
-    //show dialog again if answer is not one of the options or NaN
-    showAnswerDialog(questionIndex, 'Ogiltigt svar! \n');
   } else {
     console.log('Fel svar!');
-    //show dialog again if wrong answer  showAnswerDialog(questionIndex, 'Fel svar! \n');
-    nextQuestion();
   }
+  nextQuestion();
 }
 
 //if not last question, increment currentQuestion and run printQuestion
-async function nextQuestion() {
-  if (currentQuestion < questions.length - 1) {
-    currentQuestion++;
-    printQuestion(currentQuestion);
-    await sleep(100);
-    showAnswerDialog(currentQuestion);
-  } else {
+function nextQuestion() {
+  if (currentQuestion >= questions.length - 1) {
     console.log('last question');
+    return;
   }
+
+  currentQuestion++;
+  printQuestion();
+  printOptions();
 }
 
 function printScore() {
@@ -84,5 +90,3 @@ function printScore() {
     console.log('Antal rätt:', correctAnswers);
   }
 }
-
-//make script wait after prompt for questions!!!!!

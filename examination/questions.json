@@ -20,5 +20,26 @@
       "2001"
     ],
     "answer": 1
+  },
+  {
+    "id": 3,
+    "type": "multiple",
+    "text": "Vilka av dessa är arraymetoder?",
+    "options": [
+      "push",
+      "trim",
+      "slice",
+      "toUpperCase"
+    ],
+    "answer": [
+      0,
+      2
+    ]
+  },
+  {
+    "id": 4,
+    "type": "text",
+    "text": "Vilket nyckelord skapar en konstant?",
+    "answer": "const"
   }
 ]
