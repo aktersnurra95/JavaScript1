@@ -45,6 +45,7 @@ function printOptions() {
     default:
   }
   form.innerHTML += `<input type="submit" class="submit" />`;
+  optionsDiv.innerHTML = '';
   optionsDiv.append(form);
 
   const submitButton = document.querySelector('.submit');
@@ -62,7 +63,9 @@ function createMultipleOptions(inputType) {
 }
 
 //check answer and print next question
-function checkAnswer(answer = 0) {
+function checkAnswer(event, answer = 0) {
+  event.preventDefault();
+
   if (answer == questions[currentQuestion].answer) {
     console.log('Rätt svar!');
     correctAnswers++;
