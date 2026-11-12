@@ -3,7 +3,7 @@ const questions = await response.json();
 
 const quizElement = document.querySelector(".quiz");
 const questionElement = document.querySelector('.question');
-const optionsElement = document.querySelector('.options');
+const body = document.querySelector('.options');
 
 console.log('questions', questions);
 
@@ -21,6 +21,8 @@ function printQuestion() {
   <p><b>${questions[currentQuestion].text}</b></p>
   `;
 }
+
+//ADD ATTRIBUTE NAME TO FORM AND GET FORM VIA FORM[NAME="NAME"]
 
 function printOptions() {
   const form = document.createElement('form');
@@ -43,8 +45,8 @@ function printOptions() {
     default:
   }
   form.innerHTML += `<input type="submit" class="submit" />`;
-  optionsElement.innerHTML = '';
-  optionsElement.append(form);
+  body.innerHTML = '';
+  body.append(form);
 
   form.addEventListener('submit', checkAnswer);
 }
@@ -124,5 +126,4 @@ function printScore() {
   }
 
   console.log('all answers', allAnswers);
-
 }
