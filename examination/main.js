@@ -1,32 +1,49 @@
 const response = await fetch('questions.json');
 const questions = await response.json();
 
-const quizElement = document.querySelector(".quiz");
-const questionElement = document.querySelector('.question');
-const body = document.querySelector('.options');
+console.log('fetched questions', questions);
 
-console.log('questions', questions);
+const quiz = document.querySelector(".quiz");
+const question = document.querySelector('.question');
+const options = document.querySelector('.options');
+const form = createForm();
 
-let currentQuestion = -1;
+let currentQuestion;
+let currentQuestionIndex = -1;
 let correctAnswers = 0;
-let allAnswers = [];
+let allAnswers = []; //history of all answers
 
 nextQuestion();
 
-function printQuestion() {
-  console.log('fråga', questions[currentQuestion].id);
+let test = `<input type="range" name="option" list="values" min="${questions[5].min}" max="${questions[5].max}" />`;
+test += `<datalist id="values">`;
+for (let i = questions[5].min; i < questions[5].max; i++) {
+  test += `<option value="${i}" label="${i}"></option>`;
+}
+test += `</datalist>`;
+console.log(test);
 
-  questionElement.innerHTML = `
-  <h3>Fråga ${questions[currentQuestion].id} av ${questions.length}</h3>
-  <p><b>${questions[currentQuestion].text}</b></p>
+
+function printQuestion() {
+  console.log('fråga', currentQuestion.id);
+
+  question.innerHTML = `
+  <h3>Fråga ${currentQuestion.id} av ${questions.length}</h3>
+  <p><b>${currentQuestion.text}</b></p>
   `;
 }
 
 //ADD ATTRIBUTE NAME TO FORM AND GET FORM VIA FORM[NAME="NAME"]
 
-function printOptions() {
+function createForm() {
   const form = document.createElement('form');
-  switch (questions[currentQuestion].type) {
+  options.append(form);
+  form.addEventListener('submit', checkAnswer);
+  return form;
+}
+
+function printOptions() {
+  switch (currentQuestion.type) {
     case 'single':
       form.innerHTML = createMultipleOptions('radio');
       break;
@@ -41,20 +58,24 @@ function printOptions() {
       <label><input type="radio" name="option" value="0" />Falskt</label><br>`;
       break;
     case 'scale':
+      let html = `<input type="range" name="option" list="values" min="${currentQuestion.min}" max="${currentQuestion.max}" />`;
+      html += `<datalist id="values">`;
+      for (let i = currentQuestion.min; i <= currentQuestion.max; i++) {
+        html += `<option value="${i}" label="${i}"></option>`;
+      }
+      html += `</datalist>`;
+      form.innerHTML = html;
       break;
     default:
+      form.innerHTML = '';
   }
   form.innerHTML += `<input type="submit" class="submit" />`;
-  body.innerHTML = '';
-  body.append(form);
-
-  form.addEventListener('submit', checkAnswer);
 }
 
 function createMultipleOptions(inputType) {
   let html = '';
   let i = 0;
-  for (const option of questions[currentQuestion].options) {
+  for (const option of currentQuestion.options) {
     html += `<label><input type="${inputType}" name="option" value="${i}" />${option}</label><br>`;
     i++;
   }
@@ -64,36 +85,62 @@ function createMultipleOptions(inputType) {
 //check answer and print next question
 function checkAnswer(event) {
   event.preventDefault();
+  const answers = currentQuestion.answer;
 
+  for (let { type, name, value, checked } of form.elements) {
+    if (type === 'submit' || ((type === 'radio' || type === 'checkbox') && !checked)) continue;
+    console.log('input:', type, name, value, checked);
+
+    //do something for each answer
+    switch (type) {
+      case 'radio':
+        isCorrect(value == answers);
+        break;
+      case 'checkbox':
+        for (let answer of answers) {
+          isCorrect(value == answer);
+        }
+        break;
+      case 'text':
+        isCorrect(value.toString().toLowerCase().trim() == answers);
+        break;
+      case 'range':
+        break;
+      default:
+        console.log('not a defined type');
+    }
+  }
+
+  /* old solution
   const formData = new FormData(event.target);
   const answer = formData.getAll('option');
   console.log('raw answer', answer);
-
+ 
   allAnswers.push(answer);
-
-  switch (questions[currentQuestion].type) {
+ 
+  switch (currentQuestion.type) {
     case 'multiple':
-      correctAnswer(answer.toString(), questions[currentQuestion].answer.toString());
+      correctAnswer(answer.toString(), currentQuestion.answer.toString());
       break;
     case 'text':
-      correctAnswer(answer.toString().toLowerCase().trim(), questions[currentQuestion].answer);
+      correctAnswer(answer.toString().toLowerCase().trim(), currentQuestion.answer);
       break;
     case 'single':
     case 'boolean':
-      correctAnswer(answer, questions[currentQuestion].answer);
+      correctAnswer(answer, currentQuestion.answer);
       break;
     case 'scale':
       break;
     default:
       console.log('not a defined type');
-
+ 
   }
-
+  */
   nextQuestion();
 }
 
-function correctAnswer(answer, correctAnswer) {
-  if (answer == correctAnswer) {
+function isCorrect(correct) {
+  if (correct) {
     console.log('Rätt svar!');
     correctAnswers++;
   } else if (false) {
@@ -105,13 +152,14 @@ function correctAnswer(answer, correctAnswer) {
 
 //if not last question, increment currentQuestion and run printQuestion
 function nextQuestion() {
-  if (currentQuestion >= questions.length - 1) {
+  if (currentQuestionIndex >= questions.length - 1) {
     console.log('last question');
     printScore();
     return;
   }
 
-  currentQuestion++;
+  currentQuestionIndex++;
+  currentQuestion = questions[currentQuestionIndex];
   printQuestion();
   printOptions();
 }

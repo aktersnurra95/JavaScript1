@@ -29,6 +29,7 @@ function doSomething(event) {
   for (let { type, name, value, checked } of form.elements) {
     if (type === 'submit' || ((type === 'radio' || type === 'checkbox') && !checked)) continue;
 
+    //do something for each answer
     console.log(type, name, value, checked);
   }
 }
