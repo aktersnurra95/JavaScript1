@@ -3,9 +3,9 @@ const questions = await response.json();
 
 console.log('fetched questions', questions);
 
-const quiz = document.querySelector(".quiz");
-const question = document.querySelector('.question');
-const options = document.querySelector('.options');
+const quizContainer = document.querySelector(".quiz");
+const questionContainer = document.querySelector('.question');
+const optionsContainer = document.querySelector('.options');
 const form = createForm();
 
 let currentQuestion;
@@ -15,19 +15,10 @@ let allAnswers = []; //history of all answers
 
 nextQuestion();
 
-let test = `<input type="range" name="option" list="values" min="${questions[5].min}" max="${questions[5].max}" />`;
-test += `<datalist id="values">`;
-for (let i = questions[5].min; i < questions[5].max; i++) {
-  test += `<option value="${i}" label="${i}"></option>`;
-}
-test += `</datalist>`;
-console.log(test);
-
-
 function printQuestion() {
   console.log('fråga', currentQuestion.id);
 
-  question.innerHTML = `
+  questionContainer.innerHTML = `
   <h3>Fråga ${currentQuestion.id} av ${questions.length}</h3>
   <p><b>${currentQuestion.text}</b></p>
   `;
@@ -37,7 +28,7 @@ function printQuestion() {
 
 function createForm() {
   const form = document.createElement('form');
-  options.append(form);
+  optionsContainer.append(form);
   form.addEventListener('submit', checkAnswer);
   return form;
 }
@@ -94,15 +85,22 @@ function checkAnswer(event) {
     //do something for each answer
     switch (type) {
       case 'radio':
-        isCorrect(value == answers);
+        allAnswers[currentQuestionIndex] = isCorrect(value == answers);
         break;
       case 'checkbox':
+        if (typeof allAnswers[currentQuestionIndex] === 'undefined') {
+          allAnswers[currentQuestionIndex] = [];
+        }
+        allAnswers[currentQuestionIndex][value] = false;
         for (let answer of answers) {
           isCorrect(value == answer);
+          if (value == answer) {
+            allAnswers[currentQuestionIndex][answer] = true;
+          }
         }
         break;
       case 'text':
-        isCorrect(value.toString().toLowerCase().trim() == answers);
+        allAnswers[currentQuestionIndex] = [isCorrect(value.toString().toLowerCase().trim() == answers), value];
         break;
       case 'range':
         break;
@@ -148,6 +146,7 @@ function isCorrect(correct) {
   } else {
     console.log('Fel svar!');
   }
+  return true;
 }
 
 //if not last question, increment currentQuestion and run printQuestion
@@ -166,12 +165,46 @@ function nextQuestion() {
 
 function printScore() {
   if (correctAnswers == 0) {
-    console.log('Du fick alla fel! :(');
+    questionContainer.textContent = 'Du fick alla fel! :(';
   } else if (correctAnswers == questions.length) {
-    console.log('Du fick alla rätt! (' + correctAnswers + ')');
+    questionContainer.textContent = 'Du fick alla rätt! (' + correctAnswers + ')';
   } else {
-    console.log('Antal rätt:', correctAnswers);
+    questionContainer.textContent = 'Antal rätt: ' + correctAnswers;
   }
 
   console.log('all answers', allAnswers);
+
+  /*
+  write out all questions and answers with a loop
+  for each question mark a correct answer as green
+  and a wrong answer as red.
+  */
+  optionsContainer.innerHTML = '';
+  let i = 0;
+  for (let { id, type, text, options, answer } of questions) {
+    console.log(id, type, text, options, answer);
+
+    const questionAnswer = document.createElement('div');
+    optionsContainer.append(questionAnswer);
+    let html = `<p>Fråga ${id}: ${text}</p>`;
+
+    switch (type) {
+      case 'single':
+      case 'multi':
+        let j = 0;
+        for (let option of options) {
+          html += `<p class="option">${option}</p>`;
+          j++;
+        }
+        break;
+      case 'text':
+        html += `<p class="option">Rätt svar: ${answer}</p><p class="option">Du svarade: ${allAnswers[i][1].trim()}</p>`;
+        break;
+
+    }
+
+    questionAnswer.innerHTML = html;
+
+    i++;
+  }
 }
