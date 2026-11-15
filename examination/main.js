@@ -78,6 +78,9 @@ function checkAnswer(event) {
   event.preventDefault();
   const answers = currentQuestion.answer;
 
+  console.log('answers', answers);
+
+
   for (let { type, name, value, checked } of form.elements) {
     if (type === 'submit' || ((type === 'radio' || type === 'checkbox') && !checked)) continue;
     console.log('input:', type, name, value, checked);
@@ -91,11 +94,14 @@ function checkAnswer(event) {
         if (typeof allAnswers[currentQuestionIndex] === 'undefined') {
           allAnswers[currentQuestionIndex] = [];
         }
-        allAnswers[currentQuestionIndex][value] = false;
-        for (let answer of answers) {
-          if (isCorrect(value == answer)) {
-            allAnswers[currentQuestionIndex][answer] = true;
-          }
+
+        console.log('answers.includes(value)', answers.includes(value), 'value', value);
+
+        if (answers.includes(Number(value))) {
+          isCorrect();
+          allAnswers[currentQuestionIndex][value] = true;
+        } else {
+          allAnswers[currentQuestionIndex][value] = false;
         }
         break;
       case 'text':
@@ -137,7 +143,7 @@ function checkAnswer(event) {
   nextQuestion();
 }
 
-function isCorrect(correct) {
+function isCorrect(correct = true) {
   if (correct) {
     console.log('Rätt svar!');
     correctAnswers++;
