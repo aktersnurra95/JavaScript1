@@ -85,7 +85,7 @@ function checkAnswer(event) {
     //do something for each answer
     switch (type) {
       case 'radio':
-        allAnswers[currentQuestionIndex] = isCorrect(value == answers);
+        allAnswers[currentQuestionIndex] = [isCorrect(value == answers), value];
         break;
       case 'checkbox':
         if (typeof allAnswers[currentQuestionIndex] === 'undefined') {
@@ -93,8 +93,7 @@ function checkAnswer(event) {
         }
         allAnswers[currentQuestionIndex][value] = false;
         for (let answer of answers) {
-          isCorrect(value == answer);
-          if (value == answer) {
+          if (isCorrect(value == answer)) {
             allAnswers[currentQuestionIndex][answer] = true;
           }
         }
@@ -103,6 +102,7 @@ function checkAnswer(event) {
         allAnswers[currentQuestionIndex] = [isCorrect(value.toString().toLowerCase().trim() == answers), value];
         break;
       case 'range':
+        allAnswers[currentQuestionIndex] = true;
         break;
       default:
         console.log('not a defined type');
@@ -146,7 +146,7 @@ function isCorrect(correct) {
   } else {
     console.log('Fel svar!');
   }
-  return true;
+  return correct;
 }
 
 //if not last question, increment currentQuestion and run printQuestion
@@ -176,31 +176,67 @@ function printScore() {
 
   /*
   write out all questions and answers with a loop
-  for each question mark a correct answer as green
-  and a wrong answer as red.
+  for each question: mark the correct answer as green,
+  mark a correct answer wholy green and a wrong answer as red.
   */
+
   optionsContainer.innerHTML = '';
   let i = 0;
   for (let { id, type, text, options, answer } of questions) {
-    console.log(id, type, text, options, answer);
-
     const questionAnswer = document.createElement('div');
     optionsContainer.append(questionAnswer);
-    let html = `<p>Fråga ${id}: ${text}</p>`;
+
+    let html = `<p>${id}: ${text}</p>`;
 
     switch (type) {
-      case 'single':
-      case 'multi':
+      case 'single': {
+        if (allAnswers[i]?.[0]) {
+          questionAnswer.classList.add('green');
+        }
         let j = 0;
         for (let option of options) {
-          html += `<p class="option">${option}</p>`;
+          let color = '';
+          if (j == answer && j == allAnswers[i]?.[1]) {
+            color = 'green select';
+          } else if (j == answer && !allAnswers[i]?.[0]) {
+            color = 'green';
+          }
+          else if (j == allAnswers[i]?.[1]) {
+            color = 'red select';
+          }
+          html += `<p class="option ${color}">${option}</p>`;
+
           j++;
         }
-        break;
-      case 'text':
-        html += `<p class="option">Rätt svar: ${answer}</p><p class="option">Du svarade: ${allAnswers[i][1].trim()}</p>`;
-        break;
+      } break;
+      case 'multiple': {
+        let j = 0;
+        for (let option of options) {
+          let color = '';
+          if (allAnswers[i]?.[j]) {
+            color = 'green select';
+          } else if (allAnswers[i]?.[j] == false) {
+            color = 'red select';
+          } else if (answer.includes(j)) {
+            color = 'green';
+          }
+          html += `<p class="option ${color}">${option}</p>`;
 
+          j++;
+        }
+      } break;
+      case 'text':
+        html += `<p class="text">Rätt svar: ${answer}</p><p class="text">Du svarade: ${allAnswers[i][1].trim()}</p>`;
+        if (allAnswers[i][0]) {
+          questionAnswer.classList.add('green');
+        }
+        break;
+      case 'boolean':
+        html += `<p class="text">Du svarade: ${allAnswers[i]}</p>`;
+        if (allAnswers[i]) {
+          questionAnswer.classList.add('green');
+        }
+      default:
     }
 
     questionAnswer.innerHTML = html;

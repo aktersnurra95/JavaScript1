@@ -41,7 +41,7 @@ body {
   }
 
   div {
-    border: 1px solid black;
+    border: 1px solid red;
     border-radius: 5px;
     margin-top: 10px;
     padding-left: 10px;
@@ -61,5 +61,21 @@ body {
     margin-top: 0;
     margin-left: 5px;
     margin-right: 10px;
+  }
+
+  .green {
+    border-color: lightgreen;
+  }
+
+  .red {
+    border-color: red;
+  }
+
+  .yellow {
+    background-color: yellow;
+  }
+
+  .select {
+    border-width: 2px;
   }
 }
