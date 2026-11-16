@@ -3,9 +3,7 @@ const questions = await response.json();
 
 console.log('fetched questions', questions);
 
-const quizContainer = document.querySelector(".quiz");
-const questionContainer = document.querySelector('.question');
-const optionsContainer = document.querySelector('.options');
+const div = { 'question': document.querySelector('.question'), 'options': document.querySelector('.options') };
 const form = createForm();
 
 let currentQuestion;
@@ -18,7 +16,7 @@ nextQuestion();
 function printQuestion() {
   console.log('fråga', currentQuestion.id);
 
-  questionContainer.innerHTML = `
+  div.question.innerHTML = `
   <h3>Fråga ${currentQuestion.id} av ${questions.length}</h3>
   <p><b>${currentQuestion.text}</b></p>
   `;
@@ -28,7 +26,7 @@ function printQuestion() {
 
 function createForm() {
   const form = document.createElement('form');
-  optionsContainer.append(form);
+  div.options.append(form);
   form.addEventListener('submit', checkAnswer);
   return form;
 }
@@ -171,11 +169,11 @@ function nextQuestion() {
 
 function printScore() {
   if (correctAnswers == 0) {
-    questionContainer.textContent = 'Du fick alla fel! :(';
+    div.question.textContent = 'Du fick alla fel! :(';
   } else if (correctAnswers == questions.length) {
-    questionContainer.textContent = 'Du fick alla rätt! (' + correctAnswers + ')';
+    div.question.textContent = 'Du fick alla rätt! (' + correctAnswers + ')';
   } else {
-    questionContainer.textContent = 'Antal rätt: ' + correctAnswers;
+    div.question.textContent = 'Antal rätt: ' + correctAnswers;
   }
 
   console.log('all answers', allAnswers);
@@ -186,11 +184,11 @@ function printScore() {
   mark a correct answer wholy green and a wrong answer as red.
   */
 
-  optionsContainer.innerHTML = '';
+  div.options.innerHTML = '';
   let i = 0;
   for (let { id, type, text, options, answer } of questions) {
     const questionAnswer = document.createElement('div');
-    optionsContainer.append(questionAnswer);
+    div.options.append(questionAnswer);
 
     let html = `<p>${id}: ${text}</p>`;
 
@@ -238,8 +236,8 @@ function printScore() {
         }
         break;
       case 'boolean':
-        html += `<p class="text">Du svarade: ${allAnswers[i]}</p>`;
-        if (allAnswers[i]) {
+        html += `<p class="text">Du svarade: ${allAnswers[i][1] == true}</p>`;
+        if (allAnswers[i][0]) {
           questionAnswer.classList.add('green');
         }
       default:
